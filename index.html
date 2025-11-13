@@ -1,32 +1,29 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bespoke Shade Maker — Lampshade Pattern PWA</title> <!-- PWA manifest (generated at runtime if needed) --> <meta name="theme-color" content="#2b6cb0"> <style>
+  <title>Bespoke Shade Maker — Lampshade Pattern PWA</title>
+  <meta name="theme-color" content="#2b6cb0">
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <style>
     :root{--bg:#f7fbff;--card:#fff;--accent:#2b6cb0;--muted:#637381}
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans',sans-serif;background:var(--bg);color:#0b1220}
-    .wrap{max-width:1100px;margin:28px auto;padding:20px}
-    header{display:flex;gap:16px;align-items:center}
-    h1{margin:0;font-size:20px}
-    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(11,18,32,.06);}
-    .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:18px}
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type=number],select{width:100%;padding:8px;border-radius:8px;border:1px solid #e6eef6;font-size:14px}
-    .row{display:flex;gap:10px}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans',sans-serif;background:var(--bg);color:#0b1220;font-size:20px;touch-action:manipulation}
+    .wrap{max-width:800px;margin:8px auto;padding:8px}
+    header{display:flex;gap:12px;align-items:center}
+    h1{margin:0;font-size:22px}
+    .card{background:var(--card);border-radius:12px;padding:10px;box-shadow:0 3px 10px rgba(11,18,32,.10);margin-bottom:10px}
+    .grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
+    label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
+    input[type=number],select{width:100%;padding:14px 8px;border-radius:8px;border:1px solid #e6eef6;font-size:18px}
+    .row{display:flex;gap:8px}
     .small{width:120px}
-    #canvasWrap{background:linear-gradient(180deg,#ffffff,#f5fbff);display:flex;align-items:center;justify-content:center;height:720px;border-radius:8px;padding:12px}
-    svg{border:1px dashed rgba(11,18,32,.06);background:#fff}
-    .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
-    button{background:var(--accent);border:none;color:white;padding:10px 12px;border-radius:8px;font-weight:600;cursor:pointer}
-    button.secondary{background:#e6eef6;color:var(--accent);font-weight:600}
-    .footer{font-size:13px;color:var(--muted);margin-top:12px}
-    .info{font-size:13px;color:var(--muted);margin-top:8px}
-    .unit-toggle{display:flex;gap:4px}
-    .download-links{display:flex;gap:8px}
-    @media (max-width:880px){.grid{grid-template-columns:1fr;}.card{padding:12px}}
-  </style></head>
+    .controls{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+    button{background:var(--accent);border:none;color:white;padding:18px 0;;border-radius:8px;font-weight:600;cursor:pointer;font-size:18px;width:100%;margin-top:8px}
+    .footer,.info{font-size:15px;color:var(--muted);margin-top:12px}
+    @media (max-width:700px){body{font-size:22px;}.wrap{max-width:none;margin:0;padding:0}.grid{grid-template-columns:1fr}.card{padding:8px}}
+  </style>
+</head>
 <body>
   <div class="wrap">
     <header>
@@ -36,265 +33,168 @@
         </svg>
         <div>
           <h1>Bespoke Shade Maker</h1>
-          <div style="font-size:12px;color:var(--muted)">Create printable lampshade templates — PWA-ready</div>
+          <div style="font-size:13px;color:var(--muted)">Create printable lampshade templates — PWA-ready</div>
         </div>
       </div>
       <div style="flex:1"></div>
-    </header><div class="grid">
-  <div class="card">
-    <h2 style="margin:0 0 8px 0">Inputs</h2>
-
-    <div style="display:grid;gap:10px">
-      <div>
-        <label>Units</label>
-        <div class="row">
-          <select id="unit">
-            <option value="mm">Millimetres (mm)</option>
-            <option value="in">Inches (in)</option>
-          </select>
-          <div style="display:flex;align-items:center;margin-left:6px;color:var(--muted);font-size:13px">Toggle units — inputs update</div>
+    </header>
+    <div class="grid">
+      <div class="card">
+        <h2 style="margin:0 0 8px 0">Inputs</h2>
+        <div style="display:grid;gap:10px">
+          <div>
+            <label>Units</label>
+            <div class="row">
+              <select id="unit">
+                <option value="mm">Millimetres (mm)</option>
+                <option value="in">Inches (in)</option>
+              </select>
+              <div style="display:flex;align-items:center;margin-left:6px;color:var(--muted);font-size:15px">Toggle units — inputs update</div>
+            </div>
+          </div>
+          <div class="row">
+            <div style="flex:1">
+              <label>Top diameter</label>
+              <input id="topD" type="number" step="0.1" min="1" value="150" />
+            </div>
+            <div style="flex:1">
+              <label>Bottom diameter</label>
+              <input id="botD" type="number" step="0.1" min="1" value="300" />
+            </div>
+          </div>
+          <div>
+            <label>Height (vertical)</label>
+            <input id="height" type="number" step="0.1" min="1" value="220" />
+          </div>
+          <div class="row">
+            <div style="flex:1">
+              <label>Seam allowance (along straight edge)</label>
+              <input id="seam" type="number" step="0.1" min="0" value="10" />
+            </div>
+            <div style="flex:1">
+              <label>Bend allowance (top/bottom fold)</label>
+              <input id="fold" type="number" step="0.1" min="0" value="8" />
+            </div>
+          </div>
+          <div>
+            <label>Scale to fit page width when printing</label>
+            <select id="paperScale">
+              <option value="fit">Fit to page width (A4/Letter)</option>
+              <option value="1">1:1 (actual size)</option>
+              <option value="0.5">50%</option>
+            </select>
+          </div>
+          <div class="controls">
+            <button id="createPdfBtn">Create PDF for Printing</button>
+          </div>
+          <div class="info">
+            This generator calculates the unwrapped lateral surface of a lampshade (truncated cone). The template will be exported as a printable, multipage PDF, ready for assembly. Mathematical notes: the unwrapped template is an annular sector. For large shapes, the template will span multiple pages; align and tape pages as directed.
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div style="flex:1">
-          <label>Top diameter</label>
-          <input id="topD" type="number" step="0.1" min="1" value="150" />
-        </div>
-        <div style="flex:1">
-          <label>Bottom diameter</label>
-          <input id="botD" type="number" step="0.1" min="1" value="300" />
-        </div>
-      </div>
-
-      <div>
-        <label>Height (vertical)</label>
-        <input id="height" type="number" step="0.1" min="1" value="220" />
-      </div>
-
-      <div class="row">
-        <div style="flex:1">
-          <label>Seam allowance (along straight edge)</label>
-          <input id="seam" type="number" step="0.1" min="0" value="10" />
-        </div>
-        <div style="flex:1">
-          <label>Bend allowance (top/bottom fold)</label>
-          <input id="fold" type="number" step="0.1" min="0" value="8" />
-        </div>
-      </div>
-
-      <div>
-        <label>Scale to fit page width when printing</label>
-        <select id="paperScale">
-          <option value="fit">Fit to page width (A4)</option>
-          <option value="1">1:1 (actual size)</option>
-          <option value="0.5">50%</option>
-        </select>
-      </div>
-
-      <div class="controls">
-        <button id="drawBtn">Draw template</button>
-        <button class="secondary" id="downloadSvgBtn">Download SVG</button>
-        <button class="secondary" id="downloadPdfBtn">Download PNG (for printing)</button>
-        <div style="flex:1"></div>
-      </div>
-
-      <div class="info">
-        This generator calculates the unwrapped lateral surface of a lampshade (truncated cone). The printed SVG is scaled for printing — choose units first. Mathematical notes: the unwrapped template is an annular sector with inner/outer radii calculated from the slant geometry.
       </div>
     </div>
+    <footer style="margin-top:14px;text-align:center;color:var(--muted);font-size:13px">Offline-capable PWA — add to home screen to install.</footer>
   </div>
-
-  <div class="card">
-    <h2 style="margin:0 0 8px 0">Preview / Print</h2>
-    <div id="canvasWrap">
-      <svg id="svgCanvas" width="880" height="680" viewBox="0 0 880 680" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lampshade template preview"></svg>
-    </div>
-    <div class="footer">Tip: press "Download SVG" to get a high-quality vector file for printing. "Download PNG" produces a raster snapshot sized to A4 for easy print on most printers.</div>
-  </div>
-</div>
-
-<footer style="margin-top:14px;text-align:center;color:var(--muted);font-size:13px">Offline-capable PWA — add to home screen to install.</footer>
-
-  </div> <script>
-  // --- Utilities ---
-  function toMM(value, unit){ return unit === 'mm' ? Number(value) : Number(value) * 25.4 }
-  function fromMM(value, unit){ return unit === 'mm' ? value : value / 25.4 }
-
-  // geometry: frustum radii r1 (top), r2 (bottom), height h (all in same units)
-  // s = slant height of frustum = sqrt((r2-r1)^2 + h^2)
-  // L2 = s * r2 / (r2 - r1); L1 = s * r1 / (r2 - r1)
-  // sector angle theta = 2*pi*(r2 - r1)/s
-
-  function computeAnnularSector(r1, r2, h){
-    if (r2 === r1) r2 = r1 + 0.00001; // avoid divide by zero
-    const s = Math.sqrt((r2 - r1) * (r2 - r1) + h * h);
-    const L2 = s * r2 / (r2 - r1);
-    const L1 = s * r1 / (r2 - r1);
-    const theta = 2 * Math.PI * (r2 - r1) / s; // radians
-    return {s, L1, L2, theta};
-  }
-
-  function polarToCartesian(cx, cy, r, angle){
-    return {x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle)};
-  }
-
-  function drawTemplate({topD, botD, height, seam, fold, unit, paperScale}){
-    // convert inputs to mm for internal calculations
-    const topR = toMM(topD/2, unit);
-    const botR = toMM(botD/2, unit);
-    const h = toMM(height, unit);
-    const seamMM = toMM(seam, unit);
-    const foldMM = toMM(fold, unit);
-
-    const geom = computeAnnularSector(topR, botR, h);
-
-    // We'll create an SVG sized for preview and optionally scale for A4 when downloading.
-    const svg = document.getElementById('svgCanvas');
-    while(svg.firstChild) svg.removeChild(svg.firstChild);
-
-    // compute drawing scale so outer radius fits comfortably
-    const pad = 20;
-    const maxView = Math.min(svg.clientWidth, svg.clientHeight) - pad * 2;
-    const outerRadius = geom.L2 + foldMM + seamMM;
-    const scale = maxView / (outerRadius * 2);
-
-    const cx = svg.clientWidth/2;
-    const cy = svg.clientHeight/2;
-
-    // draw annular sector path
-    const startAngle = -geom.theta/2;
-    const endAngle = geom.theta/2;
-
-    const rInner = geom.L1 + foldMM;
-    const rOuter = geom.L2 + foldMM + seamMM;
-
-    const p1 = polarToCartesian(cx, cy, rOuter*scale, startAngle);
-    const p2 = polarToCartesian(cx, cy, rInner*scale, startAngle);
-    const p3 = polarToCartesian(cx, cy, rInner*scale, endAngle);
-    const p4 = polarToCartesian(cx, cy, rOuter*scale, endAngle);
-
-    const largeArc = geom.theta > Math.PI ? 1 : 0;
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d', `M ${p1.x} ${p1.y} A ${rOuter*scale} ${rOuter*scale} 0 ${largeArc} 1 ${p4.x} ${p4.y} L ${p3.x} ${p3.y} A ${rInner*scale} ${rInner*scale} 0 ${largeArc} 0 ${p2.x} ${p2.y} Z`);
-    path.setAttribute('fill','#fff');
-    path.setAttribute('stroke','#2b6cb0');
-    path.setAttribute('stroke-width','1.5');
-    svg.appendChild(path);
-
-    // draw center radii lines (cut/overlap indicator)
-    const cutLine = document.createElementNS('http://www.w3.org/2000/svg','line');
-    cutLine.setAttribute('x1', (polarToCartesian(cx,cy,rOuter*scale,startAngle)).x);
-    cutLine.setAttribute('y1', (polarToCartesian(cx,cy,rOuter*scale,startAngle)).y);
-    cutLine.setAttribute('x2', (polarToCartesian(cx,cy,rInner*scale,startAngle)).x);
-    cutLine.setAttribute('y2', (polarToCartesian(cx,cy,rInner*scale,startAngle)).y);
-    cutLine.setAttribute('stroke','#b8312f');
-    cutLine.setAttribute('stroke-width','1');
-    cutLine.setAttribute('stroke-dasharray','6 4');
-    svg.appendChild(cutLine);
-
-    // add measurement text
-    const info = document.createElementNS('http://www.w3.org/2000/svg','g');
-    const addText = (x,y,txt,small)=>{
-      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
-      t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('font-size', small?10:12);t.setAttribute('fill','#223');
-      t.setAttribute('text-anchor','middle');t.textContent = txt;info.appendChild(t);
+  <script>
+    // --- PDF + Geometry Utilities ---
+    function toMM(value, unit){ return unit === 'mm' ? Number(value) : Number(value) * 25.4 }
+    function fromMM(value, unit){ return unit === 'mm' ? value : value / 25.4 }
+    function computeAnnularSector(r1, r2, h){
+      if (r2 === r1) r2 = r1 + 0.00001;
+      const s = Math.sqrt((r2 - r1) * (r2 - r1) + h * h);
+      const L2 = s * r2 / (r2 - r1);
+      const L1 = s * r1 / (r2 - r1);
+      const theta = 2 * Math.PI * (r2 - r1) / s;
+      return {s, L1, L2, theta};
     }
-    addText(cx,cy- (rOuter*scale)+12,`Outer radius: ${fromMM(rOuter,unit).toFixed(2)} ${unit}`);
-    addText(cx,cy+ (rInner*scale)-6,`Inner radius: ${fromMM(rInner,unit).toFixed(2)} ${unit}`);
-    addText(cx, cy + (rOuter*scale) + 16, `Sector angle: ${(geom.theta*180/Math.PI).toFixed(2)}°`);
-    svg.appendChild(info);
-
-    // small thumbnail of top/bottom circles and labelled dims
-    const legend = document.createElementNS('http://www.w3.org/2000/svg','g');
-    const lgx = 60, lgy = 60;
-    const scaleC = 0.35;
-    const topC = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    topC.setAttribute('cx',lgx);topC.setAttribute('cy',lgy);topC.setAttribute('r',topR*scaleC);topC.setAttribute('stroke','#0b1220');topC.setAttribute('fill','none');legend.appendChild(topC);
-    const botC = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    botC.setAttribute('cx',lgx);botC.setAttribute('cy',lgy+40);botC.setAttribute('r',botR*scaleC);botC.setAttribute('stroke','#0b1220');botC.setAttribute('fill','none');legend.appendChild(botC);
-    const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');t1.setAttribute('x',lgx+40);t1.setAttribute('y',lgy+4);t1.textContent = `Top Ø ${topD} ${unit}`;t1.setAttribute('font-size',12);legend.appendChild(t1);
-    const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');t2.setAttribute('x',lgx+40);t2.setAttribute('y',lgy+44);t2.textContent = `Bottom Ø ${botD} ${unit}`;t2.setAttribute('font-size',12);legend.appendChild(t2);
-    svg.appendChild(legend);
-
-    // store geometry in svg dataset for downloads
-    svg.dataset.geom = JSON.stringify({geom,topD,botD,height,seam,fold,unit,scale});
-  }
-
-  // --- Download helpers ---
-  function downloadSVG(){
-    const svg = document.getElementById('svgCanvas');
-    const data = svg.outerHTML;
-    const blob = new Blob([data],{type:'image/svg+xml'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');a.href = url;a.download='lampshade-template.svg';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-  }
-
-  function downloadPNG(){
-    const svg = document.getElementById('svgCanvas');
-    const geomData = JSON.parse(svg.dataset.geom||'{}');
-    // We'll rasterize the SVG to a canvas at A4 300dpi (approx 2480 x 3508 px) in portrait.
-    const widthPx = 2480; const heightPx = 3508;
-    const xml = new XMLSerializer().serializeToString(svg);
-    const svgBlob = new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
-    const url = URL.createObjectURL(svgBlob);
-    const img = new Image();
-    img.onload = ()=>{
-      const canvas = document.createElement('canvas');canvas.width = widthPx;canvas.height = heightPx;
-      const ctx = canvas.getContext('2d');
-      // white background
-      ctx.fillStyle = '#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
-      // place the preview centered
-      const scale = Math.min((canvas.width-160)/img.width, (canvas.height-160)/img.height);
-      const w = img.width * scale; const h = img.height * scale;
-      ctx.drawImage(img,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
-      canvas.toBlob((blob)=>{
-        const u = URL.createObjectURL(blob);
-        const a = document.createElement('a');a.href = u;a.download='lampshade-template.png';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);
-      },'image/png',1);
-      URL.revokeObjectURL(url);
-    };
-    img.onerror = (e)=>{alert('Could not render PNG. Try downloading the SVG instead.');URL.revokeObjectURL(url)};
-    img.src = url;
-  }
-
-  // --- wire up UI ---
-  document.getElementById('drawBtn').addEventListener('click', ()=>{
-    const unit = document.getElementById('unit').value;
-    const topD = Number(document.getElementById('topD').value);
-    const botD = Number(document.getElementById('botD').value);
-    const height = Number(document.getElementById('height').value);
-    const seam = Number(document.getElementById('seam').value);
-    const fold = Number(document.getElementById('fold').value);
-    const paperScale = document.getElementById('paperScale').value;
-    drawTemplate({topD,botD,height,seam,fold,unit,paperScale});
-  });
-
-  document.getElementById('downloadSvgBtn').addEventListener('click', downloadSVG);
-  document.getElementById('downloadPdfBtn').addEventListener('click', downloadPNG);
-
-  // redraw when units change
-  document.getElementById('unit').addEventListener('change', ()=>{
-    // keep numeric values but interpret as new units: do nothing fancy — user may change unit then re-enter if needed
-    document.getElementById('drawBtn').click();
-  });
-
-  // initial draw
-  window.addEventListener('load', ()=>{ document.getElementById('drawBtn').click(); });
-
-  // --- Simple PWA service worker injection via blob (single-file app) ---
-  // We'll create a small offline service worker script from an inline string so you can save as one file.
-  const swScript = `self.addEventListener('install', event => { self.skipWaiting(); });
-  self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
-  self.addEventListener('fetch', event => { /* very small SW: default network-first */
-    event.respondWith(fetch(event.request).catch(()=>caches.match(event.request)));
-  });`;
-
-  if ('serviceWorker' in navigator){
-    const blob = new Blob([swScript],{type:'application/javascript'});
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl).then(()=>console.log('SW registered')).catch(()=>console.log('SW registration failed'));
-  }
-  </script></body>
+    function polarToCartesian(r, angle, cx, cy){
+      return {x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle)};
+    }
+    // --- PDF Generation ---
+    document.getElementById('createPdfBtn').addEventListener('click', async () => {
+      const unit = document.getElementById('unit').value;
+      const topD = Number(document.getElementById('topD').value);
+      const botD = Number(document.getElementById('botD').value);
+      const height = Number(document.getElementById('height').value);
+      const seam = Number(document.getElementById('seam').value);
+      const fold = Number(document.getElementById('fold').value);
+      const paperScale = document.getElementById('paperScale').value;
+      const { PDFDocument, rgb } = window['pdf-lib'];
+      const pdfDoc = await PDFDocument.create();
+      // PDF: A4 (595x842pt) or US Letter (612x792pt)
+      const pageWidth = 595, pageHeight = 842, margin = 28;
+      // Geometry calculations
+      const topR = toMM(topD/2, unit), botR = toMM(botD/2, unit), h = toMM(height, unit);
+      const seamMM = toMM(seam, unit), foldMM = toMM(fold, unit);
+      const geom = computeAnnularSector(topR, botR, h);
+      // sector
+      const rInner = geom.L1 + foldMM;
+      const rOuter = geom.L2 + foldMM + seamMM;
+      const angleSpan = geom.theta; // radians
+      let currentAngle = -angleSpan/2; // start left
+      const segAngle = Math.PI * 0.8; // draw max 144deg per page (to reduce template bends)
+      let pageNum = 1;
+      // Iterate segments and add PDF pages
+      while (currentAngle < angleSpan/2) {
+        const thisStart = currentAngle;
+        const thisEnd = Math.min(currentAngle + segAngle, angleSpan/2);
+        // Page setup
+        const page = pdfDoc.addPage([pageWidth, pageHeight]);
+        page.drawText(`Lampshade Template (Pg ${pageNum})`, { x: margin, y: pageHeight-margin-18, size: 16, color: rgb(0.15,0.2,0.55) });
+        // Center of arcs
+        const cx = pageWidth/2, cy = pageHeight/2-20;
+        // Scaling: fit outer radius comfortably
+        const drawMaxR = Math.min((pageWidth-2*margin), (pageHeight-2*margin)-30) / 2;
+        const scale = drawMaxR / rOuter;
+        // Make path for outer and inner arc on this page
+        let arcPts = [];
+        for(let a=thisStart; a<=thisEnd+0.0001; a+=Math.PI/240){
+          arcPts.push(polarToCartesian(rOuter*scale, a, cx, cy));
+        }
+        for(let a=thisEnd; a>=thisStart-0.0001; a-=Math.PI/240){
+          arcPts.push(polarToCartesian(rInner*scale, a, cx, cy));
+        }
+        // Trace
+        const ops = [];
+        if(arcPts.length>1){
+          ops.push(page.moveTo(arcPts[0].x, arcPts[0].y));
+          for(let i=1;i<arcPts.length;i++){ops.push(page.lineTo(arcPts[i].x,arcPts[i].y));}
+          ops.push(page.closePath());
+        }
+        page.drawPolygon(arcPts, {color:rgb(1,1,1), borderWidth:2, borderColor:rgb(0.2,0.4,0.85)});
+        // Center/cut lines (straight edges)
+        const startPtOut = polarToCartesian(rOuter*scale, thisStart, cx, cy);
+        const startPtIn = polarToCartesian(rInner*scale, thisStart, cx, cy);
+        const endPtOut = polarToCartesian(rOuter*scale, thisEnd, cx, cy);
+        const endPtIn = polarToCartesian(rInner*scale, thisEnd, cx, cy);
+        page.drawLine({start:startPtOut,end:startPtIn,thickness:1.2,color:rgb(1,.2,.2),dashArray:[6,4]});
+        page.drawLine({start:endPtOut,end:endPtIn,thickness:1.2,color:rgb(1,.2,.2),dashArray:[6,4]});
+        // Mark page join tabs if needed
+        if(thisEnd<angleSpan/2) page.drawText('Align with Pg ' + (pageNum+1), {x:endPtOut.x+8, y:endPtOut.y, size:10, color: rgb(.3,0,.2)});
+        if(pageNum>1) page.drawText('Align with Pg ' + (pageNum-1), {x:startPtOut.x-56, y:startPtOut.y, size:10, color: rgb(.3,0,.2)});
+        // Dimensions/labels
+        page.drawText(`Outer radius: ${fromMM(rOuter,unit).toFixed(2)} ${unit}`, {x: margin, y:margin+50, size:11, color: rgb(.2,.17,.2)});
+        page.drawText(`Inner radius: ${fromMM(rInner,unit).toFixed(2)} ${unit}`, {x: margin, y:margin+34, size:11, color: rgb(.2,.17,.2)});
+        page.drawText(`Sector angle: ${(geom.theta*180/Math.PI).toFixed(2)}°`, {x: margin, y:margin+18, size:11, color: rgb(.2,.17,.2)});
+        currentAngle = thisEnd;
+        pageNum++;
+      }
+      // Export PDF for download/share/print
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes],{type:'application/pdf'});
+      const url = URL.createObjectURL(blob);
+      // On Android/Chrome, window.open triggers print or preview
+      window.open(url, '_blank');
+    });
+    // PWA service worker remains unchanged
+    const swScript = `self.addEventListener('install', event => { self.skipWaiting(); });
+      self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
+      self.addEventListener('fetch', event => { event.respondWith(fetch(event.request).catch(()=>caches.match(event.request))); });`;
+    if ('serviceWorker' in navigator){
+      const blob = new Blob([swScript],{type:'application/javascript'});
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).then(()=>console.log('SW registered')).catch(()=>console.log('SW registration failed'));
+    }
+  </script>
+</body>
 </html>
