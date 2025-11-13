@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <style>
     :root{--bg:#f7fbff;--card:#fff;--accent:#2b6cb0;--muted:#637381}
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans',sans-serif;background:var(--bg);color:#0b1220;font-size:20px;touch-action:manipulation}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans',sans-serif;background:var(--bg);color:#0b1220;font-size:20px;touch-action:manipulatio[...]
     .wrap{max-width:800px;margin:8px auto;padding:8px}
     header{display:flex;gap:12px;align-items:center}
     h1{margin:0;font-size:22px}
@@ -88,7 +88,7 @@
             <!-- Will be replaced by script with Print/Open buttons -->
           </div>
           <div class="info">
-            This generator calculates the unwrapped lateral surface of a lampshade (truncated cone). The template will be exported as a printable, multipage PDF, ready for assembly. Mathematical notes and tolerances are provided for accurate cutting and folding.
+            This generator calculates the unwrapped lateral surface of a lampshade (truncated cone). The template will be exported as a printable, multipage PDF, ready for assembly. Mathematical notes[...]
           </div>
         </div>
       </div>
@@ -126,7 +126,9 @@
       const seam = Number(document.getElementById('seam').value);
       const fold = Number(document.getElementById('fold').value);
       const paperScale = document.getElementById('paperScale').value;
-      const { PDFDocument } = window['pdf-lib'];
+      const PDFLib = window.PDFLib || window['PDFLib'] || window['pdf-lib'] || window.pdfLib;
+      if (!PDFLib) throw new Error('pdf-lib is not loaded. Make sure the <script> for pdf-lib is present and loaded.');
+      const { PDFDocument } = PDFLib;
       const pdfDoc = await PDFDocument.create();
 
       // PDF: A4 (595x842pt)
